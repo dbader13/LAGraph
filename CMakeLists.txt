@@ -106,6 +106,32 @@ if ( OPENMP_FOUND )
 endif ( )
 
 #-------------------------------------------------------------------------------
+# code coverage
+#-------------------------------------------------------------------------------
+
+if ( "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+	if ( COVERAGE )
+		include ( CodeCoverage )
+
+		set ( CMAKE_BUILD_TYPE Debug )
+
+		append_coverage_compiler_flags ( )
+
+		# turn off optimization for non-skewed coverage reports
+		set ( CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O0" )
+		set ( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0" )
+
+		setup_target_for_coverage_lcov (
+			NAME test_coverage
+			EXECUTABLE ctest
+			DEPENDENCIES ${PROJECT_NAME}
+			BASE_DIRECTORY "."
+			NO_DEMANGLE TRUE
+		)
+	endif ( )
+endif ( )
+
+#-------------------------------------------------------------------------------
 # report status
 #-------------------------------------------------------------------------------
 
